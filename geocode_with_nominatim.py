@@ -28,7 +28,7 @@ if __name__ == "__main__":
     for ix in range(batch_size, df_total.shape[0], batch_size):
         df = df_total.iloc[ix:ix+batch_size]
 
-        if Path('geocoded_df_missings_final.csv').exists():
+        if Path(f'geocoded_df_missings_final_batch_{ix}.csv').exists():
             geocoded_df = pd.read_csv(f'outputs/geocoded_df_missings_final_batch_{ix}.csv', index_col=0)
         else:
             tqdm.pandas()
