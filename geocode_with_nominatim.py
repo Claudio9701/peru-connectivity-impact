@@ -17,33 +17,29 @@ def geocode_fn(row, server='https://nominatim.openstreetmap.org/'):
 if __name__ == "__main__":
     
     # Save DataFrame as csv
-    df = pd.read_csv('outputs/df_not_geocoded_final.csv')
+    df_total = pd.read_csv('outputs/df_not_geocoded_final.csv')
 
 
-    df['nombre_q'] = df['q']
-    df['q'] = df['address_q'].str.lower()
+    df_total['nombre_q'] = df_total['q']
+    df_total['q'] = df_total['address_q'].str.lower()
+    
+    
+    batch_size = 500
+    for ix in range(batch_size, df.shape[0], batch_size):
+        df = df_total.iloc[ix:ix+batch_size]
 
-    if Path('geocoded_df_missings_final.csv').exists():
-        geocoded_df = pd.read_csv('outputs/geocoded_df_missings_final.csv', index_col=0)
-    else:
-        tqdm.pandas()
-        geocoded = df.progress_apply(geocode_fn, axis=1)
-        geocoded_exploded = geocoded.explode() # unpack lists
-        geocoded_df = pd.json_normalize(geocoded_exploded) # Series of dicts -> DataFrame
-        geocoded_df.to_csv('outputs/geocoded_df_missings_final.csv')
+        if Path('geocoded_df_missings_final.csv').exists():
+            geocoded_df = pd.read_csv(f'outputs/geocoded_df_missings_final_batch_{ix}.csv', index_col=0)
+        else:
+            tqdm.pandas()
+            geocoded = df.progress_apply(geocode_fn, axis=1)
+            geocoded_exploded = geocoded.explode() # unpack lists
+            geocoded_df = pd.json_normalize(geocoded_exploded) # Series of dicts -> DataFrame
+            geocoded_df.to_csv(f'outputs/geocoded_df_missings_final_batch_{ix}.csv')
 
-    # NaNs
-    print(f"""
-Geocoded observations:
----------------------
-
-Total:
------
-{geocoded_df['lat'].isna().value_counts()}
-
-Percentage:
-----------
-{(geocoded_df['lat'].isna().value_counts() / geocoded_df.shape[0] * 100).round(2)}
+        # NaNs
+        print(f"""
+Geocoded observations: {geocoded_df['lat'].isna().value_counts().loc[False]} / {geocoded_df.shape[0]} ({(geocoded_df['lat'].isna().value_counts(normalize=True) * 100).round(2).loc[False]}%)
 
 OSM Data types:
 --------------
@@ -56,16 +52,16 @@ OSM Class:
 OSM Class type:
 --------------
 {geocoded_df['type'].value_counts()}
-    """)
+        """)
 
-    if Path('geocoded_df_missings_final.geojson').exists():
-        geocoded_gdf = gpd.read_file('geocoded_df_missings_final.geojson')
-    else:
-        geocoded_gdf = gpd.GeoDataFrame(
-            data=geocoded_df,
-            geometry=gpd.points_from_xy(geocoded_df['lon'], geocoded_df['lat']),
-            crs='EPSG:4326'
-        )
-        geocoded_gdf = geocoded_gdf.drop('boundingbox', axis=1) # Can't save list type in geojson format
-        geocoded_gdf.to_file('geocoded_df_missings_final.geojson', driver='GeoJSON')
+        if Path(f'outputs/geocoded_df_missings_final_batch_{ix}.geojson').exists():
+            geocoded_gdf = gpd.read_file(f'outputs/geocoded_df_missings_final_batch_{ix}.geojson')
+        else:
+            geocoded_gdf = gpd.GeoDataFrame(
+                data=geocoded_df,
+                geometry=gpd.points_from_xy(geocoded_df['lon'], geocoded_df['lat']),
+                crs='EPSG:4326'
+            )
+            geocoded_gdf = geocoded_gdf.drop('boundingbox', axis=1) # Can't save list type in geojson format
+            geocoded_gdf.to_file(f'outputs/geocoded_df_missings_final_batch_{ix}.geojson', driver='GeoJSON')
 
