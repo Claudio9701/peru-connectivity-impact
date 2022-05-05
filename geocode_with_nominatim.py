@@ -17,11 +17,11 @@ def geocode_fny(row, server='https://nominatim.openstreetmap.org/'):
 if __name__ == "__main__":
     
     # Save DataFrame as csv
-    df_not_geocoded_final = pd.read_csv('outputs/df_not_geocoded_final.csv')
+    df = pd.read_csv('outputs/df_not_geocoded_final.csv')
 
 
-    df_not_geocoded_final['nombre_q'] = df_not_geocoded_final['q']
-    df_not_geocoded_final['q'] = df_not_geocoded_final['address_q'].str.lower()
+    df['nombre_q'] = df['q']
+    df['q'] = df['address_q'].str.lower()
 
     if Path('geocoded_df_missings_final.csv').exists():
         geocoded_df = pd.read_csv('outputs/geocoded_df_missings_final.csv', index_col=0)
