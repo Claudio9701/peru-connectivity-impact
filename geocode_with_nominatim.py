@@ -23,7 +23,7 @@ if __name__ == "__main__":
     df_not_geocoded_final['nombre_q'] = df_not_geocoded_final['q']
     df_not_geocoded_final['q'] = df_not_geocoded_final['address_q'].str.lower()
 
-    if Path(fn+'.csv').exists():
+    if Path('geocoded_df_missings_final.csv').exists():
         geocoded_df = pd.read_csv('outputs/geocoded_df_missings_final.csv', index_col=0)
     else:
         tqdm.pandas()
@@ -58,7 +58,7 @@ OSM Class type:
 {geocoded_df['type'].value_counts()}
     """)
 
-    if Path(fn+'.geojson').exists():
+    if Path('geocoded_df_missings_final.geojson').exists():
         geocoded_gdf = gpd.read_file('geocoded_df_missings_final.geojson')
     else:
         geocoded_gdf = gpd.GeoDataFrame(
