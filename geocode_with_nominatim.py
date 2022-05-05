@@ -5,7 +5,7 @@ import geopandas as gpd
 from pathlib import Path
 from tqdm import tqdm
 
-def geocode_fny(row, server='https://nominatim.openstreetmap.org/'):
+def geocode_fn(row, server='https://nominatim.openstreetmap.org/'):
     params = {'q': row['q'], 'limit': 1, 'format': 'json', 'bounded': 1,
               'viewbox':','.join([str(val) for val in row[['minx', 'miny', 'maxx', 'maxy']]])}
     response = requests.get(server+'/search', params=params)
