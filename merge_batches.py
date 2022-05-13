@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
 
-dfs = [pd.read_csv(fs, index_col=0) for fs in Path('outputs/').iterdir() if fs.name.startswith('geocoded_df')]
+dfs = [pd.read_csv(fs, index_col=0) for fs in Path('outputs/').iterdir() if fs.name.startswith('geocoded_df') and fs.name.endswith('.csv')]
 
 # Concatenate and double check index integrity (i.e. no duplicates)
 geocoded_concatenate = pd.concat(dfs)
