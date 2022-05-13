@@ -25,7 +25,7 @@ if __name__ == "__main__":
     
     
     batch_size = 500
-    for ix in range(batch_size, df_total.shape[0], batch_size):
+    for ix in range(0, df_total.shape[0], batch_size):
         df = df_total.iloc[ix:ix+batch_size]
 
         if Path(f'outputs/geocoded_df_missings_final_batch_{ix}.csv').exists():
