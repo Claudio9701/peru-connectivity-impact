@@ -9,7 +9,7 @@ geocoded_concatenate = pd.concat(dfs)
 print(geocoded_concatenate.index.duplicated().sum())
 print(geocoded_concatenate.shape)
 
-df_main = pd.read_csv('outputs/geocode_with_nominatim.csv', index_col=0)
+df_main = pd.read_csv('outputs/df_not_geocoded_final.csv', index_col=0)
 
 print(df_main.head())
 print(df_main.shape)
