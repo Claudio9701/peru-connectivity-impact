@@ -13,5 +13,5 @@ print('Geocoded')
 print(geocoded_df_orig_index['lat'].notna().sum())
 print(round((geocoded_df_orig_index['lat'].notna().sum() / geocoded_df_orig_index.shape[0]) * 100, 2), '%')
 geocoded_df_orig_index_clean = geocoded_df_orig_index[geocoded_df_orig_index['lat'].notna().values]
-s
+
 geocoded_df_orig_index_clean.to_csv(f'outputs/geocoded_df_all_batches.csv')
